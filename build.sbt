@@ -46,9 +46,9 @@ lazy val jcg_wala_testadapter = project.settings(
     commonSettings,
     name := "JCG WALA Test Adapter",
     resolvers += Resolver.sonatypeRepo("snapshots"),
-    libraryDependencies += "com.ibm.wala" % "com.ibm.wala.core" % "1.5.4-SNAPSHOT",
-    libraryDependencies += "com.ibm.wala" % "com.ibm.wala.util" % "1.5.4-SNAPSHOT",
-    libraryDependencies += "com.ibm.wala" % "com.ibm.wala.shrike" % "1.5.4-SNAPSHOT",
+    libraryDependencies += "com.ibm.wala" % "com.ibm.wala.core" % "1.5.4",
+    libraryDependencies += "com.ibm.wala" % "com.ibm.wala.util" % "1.5.4",
+    libraryDependencies += "com.ibm.wala" % "com.ibm.wala.shrike" % "1.5.4",
     libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.9",
     aggregate in assembly := false,
     publishArtifact := false
@@ -96,6 +96,21 @@ lazy val jcg_doop_testadapter = project.settings(
     jcg_testadapter_commons
 )
 
+lazy val jcg_sootup_testadapter = project.settings(
+    commonSettings,
+    resolvers += Resolver.mavenLocal,
+    name := "JCG SootUp Test Adapter",
+    libraryDependencies += "org.soot-oss" % "sootup.callgraph" % "1.0.0-SNAPSHOT",
+    libraryDependencies += "org.soot-oss" % "sootup.core" % "1.0.0-SNAPSHOT",
+    libraryDependencies += "org.soot-oss" % "sootup.java.bytecode" % "1.0.0-SNAPSHOT",
+    libraryDependencies += "org.soot-oss" % "sootup.java.core" % "1.0.0-SNAPSHOT",
+    aggregate in assembly := false,
+    publishArtifact := false
+).dependsOn(
+    jcg_annotation_matcher,
+    jcg_testadapter_commons
+)
+
 lazy val jcg_testadapter_commons = project.settings(
     commonSettings,
     name := "JCG Test Adapter Commons",
@@ -117,5 +132,6 @@ lazy val jcg_evaluation = project.settings(
     jcg_wala_testadapter,
     jcg_soot_testadapter,
     jcg_opal_testadapter,
-    jcg_doop_testadapter
+    jcg_doop_testadapter,
+    jcg_sootup_testadapter
 )
