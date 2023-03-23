@@ -63,6 +63,14 @@ public @interface IndirectCall {
 
     Class<?> returnType() default Void.class;
 
-    Class<?>[] parameterTypes() default {};
+    /**
+     * Parameter types of the resolved method
+     */
+    Class<?>[] rtParameterTypes() default {};
+
+    /**
+     * Parameter types of the prohibited method
+     */
+    Class<?>[] ptParameterTypes() default {};
 
 }

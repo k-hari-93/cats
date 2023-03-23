@@ -54,7 +54,7 @@ lazy val jcg_wala_testadapter = project.settings(
     publishArtifact := false
 ).dependsOn(jcg_data_format, jcg_testadapter_commons)
 
-lazy val jcg_soot_testadapter = project.settings(
+/*lazy val jcg_soot_testadapter = project.settings(
     commonSettings,
     name := "JCG Soot Test Adapter",
     resolvers += "soot snapshot" at "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-snapshot/",
@@ -63,7 +63,7 @@ lazy val jcg_soot_testadapter = project.settings(
     libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.9",
     aggregate in assembly := false,
     publishArtifact := false
-).dependsOn(jcg_testadapter_commons)
+).dependsOn(jcg_testadapter_commons)*/
 
 lazy val jcg_opal_testadapter = project.settings(
     commonSettings,
@@ -130,7 +130,7 @@ lazy val jcg_evaluation = project.settings(
     jcg_data_format,
     jcg_annotation_matcher,
     jcg_wala_testadapter,
-    jcg_soot_testadapter,
+    //jcg_soot_testadapter,
     jcg_opal_testadapter,
     jcg_doop_testadapter,
     jcg_sootup_testadapter

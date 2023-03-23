@@ -25,4 +25,9 @@ public interface JCGTestAdapter {
     String[] possibleAlgorithms();
 
     String frameworkName();
+
+    /**
+     * Returns true if the static analysis framework supports
+     * finding the line number of a program statement */
+    Boolean locationSupport();
 }

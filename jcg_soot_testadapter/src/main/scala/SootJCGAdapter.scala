@@ -2,7 +2,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintStream
-
 import play.api.libs.json.Json
 import soot.G
 import soot.PackManager
@@ -168,4 +167,9 @@ object SootJCGAdapter extends JCGTestAdapter {
 
         Method(name, declaringClass, returnType, paramTypes)
     }
+
+    /**
+     * Returns true if the static analysis framework supports
+     * finding the line number of a program statement */
+    override def locationSupport(): java.lang.Boolean = true
 }

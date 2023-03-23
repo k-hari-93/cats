@@ -227,7 +227,7 @@ class Demo {
     public static Object target(String param) { return param; }
 
     @IndirectCall(
-        name = "target", returnType = Object.class, parameterTypes = String.class, line = 18,
+        name = "target", returnType = Object.class, rtParameterTypes = String.class, line = 18,
         resolvedTargets = "Ltmr/Demo;"
     )
     public static void main(String[] args) throws Throwable {
@@ -258,7 +258,7 @@ class Demo {
     public static String target(String param1, String param2) { return param1 + param2; }
 
     @IndirectCall(
-        name = "target", returnType = String.class, parameterTypes = { String.class, String.class },
+        name = "target", returnType = String.class, rtParameterTypes = { String.class, String.class },
         line = 18, resolvedTargets = "Ltmr/Demo;"
     )
     public static void main(String[] args) throws Throwable {

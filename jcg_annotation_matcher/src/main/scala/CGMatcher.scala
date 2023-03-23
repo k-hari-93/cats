@@ -29,7 +29,8 @@ object CGMatcher {
         JREPath:             String,
         parent:              File,
         serializedCallGraph: File,
-        verbose:             Boolean              = false
+        verbose:             Boolean              = false,
+        locationSupport:     Boolean              = true
     ): Assessment = {
         if (!verbose)
             OPALLogger.updateLogger(GlobalLogContext, new DevNullLogger())
@@ -66,7 +67,8 @@ object CGMatcher {
                     annotatedMethod,
                     method,
                     directCallAnnotations,
-                    verbose
+                    verbose,
+                    locationSupport
                 )
 
                 if (csAssessment.isUnsound) {
@@ -102,7 +104,8 @@ object CGMatcher {
         annotatedMethod:       Method,
         method:                br.Method,
         directCallAnnotations: Seq[Annotation],
-        verbose:               Boolean
+        verbose:               Boolean,
+        locationSupport:       Boolean
     )(implicit p: SomeProject): Assessment = {
         var finalAssessment: Assessment = Sound
         for (annotation ← directCallAnnotations) {
@@ -113,7 +116,7 @@ object CGMatcher {
             val name = AnnotationHelper.getName(annotation)
 
             computedCallSites.find { cs ⇒
-                cs.line == line && cs.declaredTarget.name == name
+                cs.line == (if(locationSupport) { line } else -1) && cs.declaredTarget.name == name
             } match {
                 case Some(computedCallSite) ⇒
 
@@ -168,20 +171,21 @@ object CGMatcher {
 
             val name = AnnotationHelper.getName(annotation)
             val returnType = AnnotationHelper.getReturnType(annotation).toJVMTypeName
-            val parameterTypes = AnnotationHelper.getParameterList(annotation).map(_.toJVMTypeName)
+            val rtParameterTypes = AnnotationHelper.getParameterList(annotation,"rtParameterTypes").map(_.toJVMTypeName)
 
             val resolvedTargets = AnnotationHelper.getResolvedTargets(annotation)
             AnnotationVerifier.verifyJVMTypes(resolvedTargets)
             for (declaringClass ← resolvedTargets) {
-                val annotatedTarget = Method(name, declaringClass, returnType, parameterTypes)
+                val annotatedTarget = Method(name, declaringClass, returnType, rtParameterTypes)
                 if (!callsIndirectly(reachableMethods, annotatedSource, annotatedTarget, verbose))
                     return Unsound;
             }
 
             val prohibitedTargets = AnnotationHelper.getProhibitedTargets(annotation)
+            val ptParameterTypes = AnnotationHelper.getParameterList(annotation,"ptParameterTypes").map(_.toJVMTypeName)
             AnnotationVerifier.verifyJVMTypes(prohibitedTargets)
             for (prohibitedTgt ← prohibitedTargets) {
-                val annotatedTarget = Method(name, prohibitedTgt, returnType, parameterTypes)
+                val annotatedTarget = Method(name, prohibitedTgt, returnType, ptParameterTypes)
                 if (callsIndirectly(reachableMethods, annotatedSource, annotatedTarget, verbose))
                     finalAssessment = finalAssessment.combine(Imprecise)
             }

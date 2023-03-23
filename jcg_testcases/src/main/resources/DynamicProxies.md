@@ -58,11 +58,11 @@ import lib.annotations.callgraph.IndirectCall;
 
 public class Main {
 	@IndirectCall(
-        name = "bar", returnType = Object.class, parameterTypes = Object.class, line = 17,
+        name = "bar", returnType = Object.class, rtParameterTypes = Object.class, line = 17,
         resolvedTargets = "Ldp/FooImpl;"
     )
     @IndirectCall(
-        name = "invoke", returnType = Object.class, parameterTypes = {Object.class, Method.class, Object[].class}, line = 17,
+        name = "invoke", returnType = Object.class, rtParameterTypes = {Object.class, Method.class, Object[].class}, line = 17,
         resolvedTargets = "Ldp/DebugProxy;"
     )
 	public static void main(String[] args) {

@@ -105,7 +105,7 @@ class Demo {
     public static String target(String parameter) { return "Value: " + parameter; }
 
     @IndirectCall(
-        name = "target", returnType = String.class, parameterTypes = String.class, line = 13,
+        name = "target", returnType = String.class, rtParameterTypes = String.class, line = 13,
         resolvedTargets = "Ltr/Demo;"
     )
     public static void main(String[] args) throws Exception {

@@ -3,13 +3,10 @@ import java.io.File
 import java.io.FileWriter
 import java.io.Writer
 import java.net.URL
-
 import scala.collection.JavaConverters._
-
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigValueFactory
-
 import org.opalj.fpcf.FinalEP
 import org.opalj.fpcf.PropertyStore
 import org.opalj.br.DeclaredMethod
@@ -26,6 +23,7 @@ import org.opalj.br.ObjectType
 import org.opalj.ai.domain.l2.DefaultPerformInvocationsDomainWithCFGAndDefUse
 import org.opalj.ai.fpcf.properties.AIDomainFactoryKey
 import org.opalj.tac.cg.RTACallGraphKey
+
 
 /**
  * A [[JCGTestAdapter]] for the FPCF-based call graph analyses of OPAL.
@@ -259,4 +257,9 @@ object OpalJCGAdatper extends JCGTestAdapter {
             out.write(method.descriptor.parameterTypes.iterator.map[String](_.toJVMTypeName).mkString("\"", "\",\"", "\""))
         out.write("]}")
     }
+
+    /**
+     * Returns true if the static analysis framework supports
+     * finding the line number of a program statement */
+    override def locationSupport(): java.lang.Boolean = true
 }

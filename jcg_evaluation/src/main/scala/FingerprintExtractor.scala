@@ -92,8 +92,8 @@ object FingerprintExtractor {
                 }
 
                 System.gc()
-
-                val result = CGMatcher.matchCallSites(projectSpec, jreLocations(projectSpec.java), projectsDir, cgFile, config.debug)
+                val locationSupport = adapter.locationSupport()
+                val result = CGMatcher.matchCallSites(projectSpec, jreLocations(projectSpec.java), projectsDir, cgFile, config.debug, locationSupport)
                 ow.write(s"\t${result.shortNotation}")
                 fingerprintWriter.println(s"${projectSpec.name}\t${result.shortNotation}")
 

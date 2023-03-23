@@ -53,7 +53,7 @@ case class JCGConfig(
 }
 
 object ConfigParser {
-    val ALL_ADAPTERS = List(SootJCGAdapter, WalaJCGAdapter, OpalJCGAdatper, DoopAdapter)
+    val ALL_ADAPTERS = List(/*SootJCGAdapter,*/ WalaJCGAdapter, OpalJCGAdatper, DoopAdapter, SootUpAdapter)
 
     def parseConfig(args: Array[String]): Option[JCGConfig] = {
         import scopt.OParser
@@ -127,7 +127,7 @@ object ConfigParser {
 
 object CommonEvaluationConfig {
 
-    val ALL_ADAPTERS = List(SootJCGAdapter, WalaJCGAdapter, OpalJCGAdatper, DoopAdapter)
+    val ALL_ADAPTERS = List(/*SootJCGAdapter,*/ WalaJCGAdapter, OpalJCGAdatper, DoopAdapter, SootUpAdapter)
 
 
 

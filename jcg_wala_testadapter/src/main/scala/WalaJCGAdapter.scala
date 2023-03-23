@@ -185,4 +185,9 @@ object WalaJCGAdapter extends JCGTestAdapter {
             false
         }
     }
+
+    /**
+     * Returns true if the static analysis framework supports
+     * finding the line number of a program statement */
+    override def locationSupport(): java.lang.Boolean = true
 }
