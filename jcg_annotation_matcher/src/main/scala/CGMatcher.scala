@@ -114,18 +114,23 @@ object CGMatcher {
 
             val line = AnnotationHelper.getLineNumber(annotation)
             val name = AnnotationHelper.getName(annotation)
+            val returnType = AnnotationHelper.getReturnType(annotation).toJVMTypeName
+            val rtParameterTypes = AnnotationHelper.getParameterList(annotation,"rtParameterTypes").map(_.toJVMTypeName)
+            val ptParameterTypes = AnnotationHelper.getParameterList(annotation, "ptParameterTypes").map(_.toJVMTypeName)
+
 
             computedCallSites.find { cs ⇒
                 cs.line == (if(locationSupport) { line } else -1) && cs.declaredTarget.name == name
             } match {
                 case Some(computedCallSite) ⇒
 
-                    val computedTargets = computedCallSite.targets.map(_.declaringClass)
+                    val computedTargets = computedCallSite.targets
 
                     val resolvedTargets = AnnotationHelper.getResolvedTargets(annotation)
                     AnnotationVerifier.verifyJVMTypes(resolvedTargets)
                     for (annotatedTgt ← resolvedTargets) {
-                        if (!computedTargets.contains(annotatedTgt)) {
+                        val m = Method(name, annotatedTgt, returnType, rtParameterTypes)
+                        if (!computedTargets.contains(m)) {
                             if (verbose)
                                 println(s"$line:${annotatedMethod.declaringClass}#${annotatedMethod.name}:\t there is no call to $annotatedTgt#$name")
                             return Unsound;
@@ -137,7 +142,8 @@ object CGMatcher {
                     val prohibitedTargets = AnnotationHelper.getProhibitedTargets(annotation)
                     AnnotationVerifier.verifyJVMTypes(prohibitedTargets)
                     for (prohibitedTgt ← prohibitedTargets) {
-                        if (computedTargets.contains(prohibitedTgt)) {
+                        val m = Method(name, prohibitedTgt, returnType, ptParameterTypes)
+                        if (computedTargets.contains(m)) {
                             if (verbose)
                                 println(s"$line:${annotatedMethod.declaringClass}#${annotatedMethod.name}:\t there is a call to prohibited target $prohibitedTgt#$name")
                             finalAssessment = finalAssessment.combine(Imprecise)
@@ -172,6 +178,7 @@ object CGMatcher {
             val name = AnnotationHelper.getName(annotation)
             val returnType = AnnotationHelper.getReturnType(annotation).toJVMTypeName
             val rtParameterTypes = AnnotationHelper.getParameterList(annotation,"rtParameterTypes").map(_.toJVMTypeName)
+            val ptParameterTypes = AnnotationHelper.getParameterList(annotation,"ptParameterTypes").map(_.toJVMTypeName)
 
             val resolvedTargets = AnnotationHelper.getResolvedTargets(annotation)
             AnnotationVerifier.verifyJVMTypes(resolvedTargets)
@@ -182,7 +189,6 @@ object CGMatcher {
             }
 
             val prohibitedTargets = AnnotationHelper.getProhibitedTargets(annotation)
-            val ptParameterTypes = AnnotationHelper.getParameterList(annotation,"ptParameterTypes").map(_.toJVMTypeName)
             AnnotationVerifier.verifyJVMTypes(prohibitedTargets)
             for (prohibitedTgt ← prohibitedTargets) {
                 val annotatedTarget = Method(name, prohibitedTgt, returnType, ptParameterTypes)

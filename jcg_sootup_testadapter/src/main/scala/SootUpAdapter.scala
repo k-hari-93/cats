@@ -55,9 +55,9 @@ object SootUpAdapter extends JCGTestAdapter {
             Collections.singletonList(entryMethod)
 
         } else {
-            val methodsList = view.getClasses.asScala.flatten(className => className.getMethods.asScala.toList)
-            val methodSignatures = methodsList.map(_.getSignature).toList.asJava
-            methodSignatures
+            view.getClasses.asScala.toList
+                .flatMap(className => className.getMethods.asScala.toList)
+                .map(_.getSignature).asJava
         }
 
         val cgAlgorithm = algorithm match {

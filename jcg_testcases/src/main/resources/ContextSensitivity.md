@@ -27,7 +27,7 @@ class Subclass2 extends Superclass {
 class Class {
     
     @DirectCall(name = "method", line = 26, resolvedTargets = "Lctx/Subclass1;" , prohibitedTargets = {"Lctx/Superclass;", "Lctx/Subclass2;"})
-    @DirectCall(name = "method", line = 28, resolvedTargets = "Lctx/Subclass1;" , prohibitedTargets = {"Lctx/Superclass;", "Lctx/Subclass2;"})
+    @DirectCall(name = "method", line = 28, resolvedTargets = "Lctx/Subclass2;" , prohibitedTargets = {"Lctx/Superclass;", "Lctx/Subclass1;"})
     public static void main(String[] args) {
         Superclass clz;
         clz = assignObj(new Subclass1());
@@ -112,7 +112,7 @@ class A {
 
 class Class {
     
-    @DirectCall(name = "method", line = 19, resolvedTargets = "Lctx/A;", rtParameterTypes = { Integer.class },
+    @DirectCall(name = "method", line = 19, resolvedTargets = "Lctx/A;", rtParameterTypes = { int.class },
             prohibitedTargets = "Lctx/A;", ptParameterTypes = { String.class })
     public static void main(String[] args) {
         A a = new A();
