@@ -31,7 +31,8 @@ object CGMatcher {
         serializedCallGraph: File,
         verbose:             Boolean              = false,
         locationSupport:     Boolean              = true
-    ): Assessment = {
+    ): Array[Assessment]  = {
+        var finalAssessment: Array[Assessment] = Array(Sound, NoTests)
         if (!verbose)
             OPALLogger.updateLogger(GlobalLogContext, new DevNullLogger())
 
@@ -42,7 +43,7 @@ object CGMatcher {
         )
 
         if(!serializedCallGraph.exists()){
-            return Error;
+            return Array(Error, Error);
         }
 
         val computedReachableMethods =
@@ -71,9 +72,9 @@ object CGMatcher {
                     locationSupport
                 )
 
-                if (csAssessment.isUnsound) {
+                /*if (csAssessment.isUnsound) {
                     return Unsound;
-                }
+                }*/
 
                 val indirectCallAnnotations = AnnotationHelper.indirectCallAnnotations(annotation)
 
@@ -84,15 +85,15 @@ object CGMatcher {
                     verbose
                 )
 
-                val finalAssessment = csAssessment.combine(icsAssessment)
+                finalAssessment = Array(csAssessment(0).combine(icsAssessment(0)), csAssessment(1).combine(icsAssessment(1)))
 
-                if (!finalAssessment.isSound)
-                    return finalAssessment;
+                /*if (!finalAssessment.isSound)
+                    return finalAssessment;*/
             }
 
         }
 
-        Sound
+        finalAssessment
     }
 
     /**
@@ -100,14 +101,14 @@ object CGMatcher {
      * whether the prohibit call targets are not present in the computed call graph.
      */
     private def handleDirectCallAnnotations(
-        computedCallSites:     Set[CallSite],
-        annotatedMethod:       Method,
-        method:                br.Method,
+        computedCallSites: Set[CallSite],
+        annotatedMethod: Method,
+        method: br.Method,
         directCallAnnotations: Seq[Annotation],
-        verbose:               Boolean,
-        locationSupport:       Boolean
-    )(implicit p: SomeProject): Assessment = {
-        var finalAssessment: Assessment = Sound
+        verbose: Boolean,
+        locationSupport: Boolean
+    )(implicit p: SomeProject): Array[Assessment] = {
+        var finalAssessment: Array[Assessment] = Array(Sound, NoTests)
         for (annotation ← directCallAnnotations) {
             // here we identify call sites only by name and line number, not regarding types
             AnnotationVerifier.verifyDirectCallAnnotation(annotation, method)
@@ -146,14 +147,15 @@ object CGMatcher {
                         if (computedTargets.contains(m)) {
                             if (verbose)
                                 println(s"$line:${annotatedMethod.declaringClass}#${annotatedMethod.name}:\t there is a call to prohibited target $prohibitedTgt#$name")
-                            finalAssessment = finalAssessment.combine(Imprecise)
+                            finalAssessment(1) = finalAssessment(1).combine(Imprecise)
                         } else {
                             if (verbose) println("no call to prohibited")
+                            finalAssessment(1) = finalAssessment(1).combine(Precise)
                         }
                     }
                 case _ ⇒
                     // there is no matching call site in the computed call graph
-                    return Unsound;
+                    return Array(Unsound, Imprecise);
             }
         }
 
@@ -169,9 +171,9 @@ object CGMatcher {
         source:                  br.Method,
         indirectCallAnnotations: Seq[Annotation],
         verbose:                 Boolean
-    )(implicit p: SomeProject): Assessment = {
+    )(implicit p: SomeProject): Array[Assessment] = {
         val annotatedSource = convertMethod(source)
-        var finalAssessment: Assessment = Sound
+        var finalAssessment: Array[Assessment] = Array(Sound, NoTests)
         for (annotation ← indirectCallAnnotations) {
             AnnotationVerifier.verifyCallExistence(annotation, source)
 
@@ -185,7 +187,7 @@ object CGMatcher {
             for (declaringClass ← resolvedTargets) {
                 val annotatedTarget = Method(name, declaringClass, returnType, rtParameterTypes)
                 if (!callsIndirectly(reachableMethods, annotatedSource, annotatedTarget, verbose))
-                    return Unsound;
+                    finalAssessment(0) = finalAssessment(0).combine(Unsound)
             }
 
             val prohibitedTargets = AnnotationHelper.getProhibitedTargets(annotation)
@@ -193,7 +195,10 @@ object CGMatcher {
             for (prohibitedTgt ← prohibitedTargets) {
                 val annotatedTarget = Method(name, prohibitedTgt, returnType, ptParameterTypes)
                 if (callsIndirectly(reachableMethods, annotatedSource, annotatedTarget, verbose))
-                    finalAssessment = finalAssessment.combine(Imprecise)
+                    finalAssessment(1) = finalAssessment(1).combine(Imprecise)
+                else
+                    finalAssessment(1) = finalAssessment(1).combine(Precise)
+
             }
         }
 

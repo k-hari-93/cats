@@ -9,6 +9,17 @@ Test to check if objects of sibling classes can be correctly distinguished.
 package obj;
 
 import lib.annotations.callgraph.DirectCall;
+
+class Class {
+
+    @DirectCall(name = "method", line = 11, resolvedTargets = "Lobj/Subclass1;" , prohibitedTargets = {"Lobj/Superclass;", "Lobj/Subclass2;"})
+    public static void main(String[] args) {
+        Superclass clz1 = new Subclass1();
+        Superclass clz2 = new Subclass2();
+        clz1.method();
+    }
+}
+
 class Superclass {
     void method() {
         //do something
@@ -24,13 +35,128 @@ class Subclass2 extends Superclass {
         //do something
     }
 }
+```
+[//]: # (END)
+
+## Object2
+[//]: # (MAIN: obj.Class)
+Test to check if the correct object and the resulting value is considered.
+```java
+// obj/Class.java
+package obj;
+
+import lib.annotations.callgraph.DirectCall;
+
 class Class {
 
-    @DirectCall(name = "method", line = 25, resolvedTargets = "Lobj/Subclass1;" , prohibitedTargets = {"Lobj/Superclass;", "Lobj/Subclass2;"})
+    @DirectCall(name = "method", line = 11, resolvedTargets = "Lobj/Subclass1;" , prohibitedTargets = {"Lobj/Superclass;", "Lobj/Subclass2;"})
     public static void main(String[] args) {
-        Superclass clz1 = new Subclass1();
-        Superclass clz2 = new Subclass2();
+        Superclass clz = new Superclass(new Subclass2());
+        Superclass clz1 = new Superclass(new Subclass1());
+        clz1.a.method();
+    }
+}
+
+class Superclass {
+    Superclass a;
+
+    public Superclass(Superclass a){
+        this.a=a;
+    }
+
+    Superclass getA(){
+        return a;
+    }
+
+    void method() {
+        //do something
+    }
+}
+class Subclass1 extends Superclass {
+    void method() {
+        //do something
+    }
+}
+
+class Subclass2 extends Superclass {
+    void method() {
+        //do something
+    }
+}
+```
+[//]: # (END)
+
+## Object3
+[//]: # (MAIN: obj.Class)
+Test to check if aliases are considered
+```java
+// obj/Class.java
+package obj;
+
+import lib.annotations.callgraph.DirectCall;
+
+class Class {
+
+    @DirectCall(name = "method", line = 11, resolvedTargets = "Lobj/Subclass1;" , prohibitedTargets = {"Lobj/Superclass;"})
+    public static void main(String[] args) {
+        Superclass clz = new Subclass1();
+        Superclass clz1 = clz;
         clz1.method();
+    }
+}
+
+class Superclass {
+
+    void method() {
+        //do something
+    }
+}
+class Subclass1 extends Superclass {
+    void method() {
+        //do something
+    }
+}
+```
+[//]: # (END)
+
+## Object4
+[//]: # (MAIN: obj.Class)
+Test to check if aliases are considered
+```java
+// obj/Class.java
+package obj;
+
+import lib.annotations.callgraph.DirectCall;
+
+class Class {
+
+    @DirectCall(name = "method", line = 12, resolvedTargets = "Lobj/Subclass1;" , prohibitedTargets = {"Lobj/Superclass;"})
+    public static void main(String[] args) {
+        Superclass clz = new Superclass(new Subclass1());
+        Superclass clz1 = clz;
+        Superclass clz2 = clz1.getA();
+        clz2.method();
+    }
+}
+
+class Superclass {
+    Superclass a;
+
+    public Superclass(Superclass a){
+        this.a=a;
+    }
+
+    Superclass getA(){
+        return a;
+    }
+
+    void method() {
+        //do something
+    }
+}
+class Subclass1 extends Superclass {
+    void method() {
+        //do something
     }
 }
 ```

@@ -4,42 +4,43 @@ Tests to evaluate whether the calling contexts can be distinguished under differ
 ## Context1
 [//]: # (MAIN: ctx.Class)
 Test to check whether return parameters are assigned correctly.
+
 ```java
 // ctx/Class.java
 package ctx;
 
 import lib.annotations.callgraph.DirectCall;
+import lib.annotations.callgraph.DirectCalls;
+
+class Class {
+    @DirectCalls({
+            @DirectCall(name = "method", line = 13, resolvedTargets = "Lctx/Subclass1;", prohibitedTargets = {"Lctx/Superclass;"}),
+            @DirectCall(name = "method", line = 15, resolvedTargets = "Lctx/Superclass;", prohibitedTargets = {"Lctx/Subclass1;"})})
+    public static void main(String[] args) {
+        Superclass clz, clz1;
+        clz = assignObj(new Subclass1());
+        clz.method();
+        clz1 = assignObj(new Superclass());
+        clz1.method();
+    }
+
+    private static Superclass assignObj(Superclass c) {
+        return c;
+    }
+}
+
 class Superclass {
     void method() {
         //do something
     }
 }
+
 class Subclass1 extends Superclass {
     void method() {
         //do something
     }
 }
-class Subclass2 extends Superclass {
-    void method() {
-        //do something
-    }
-}
-class Class {
-    
-    @DirectCall(name = "method", line = 26, resolvedTargets = "Lctx/Subclass1;" , prohibitedTargets = {"Lctx/Superclass;", "Lctx/Subclass2;"})
-    @DirectCall(name = "method", line = 28, resolvedTargets = "Lctx/Subclass2;" , prohibitedTargets = {"Lctx/Superclass;", "Lctx/Subclass1;"})
-    public static void main(String[] args) {
-        Superclass clz;
-        clz = assignObj(new Subclass1());
-        clz.method();
-        clz = assignObj(new Subclass2());
-        clz.method();
-    }
-    
-    private static Superclass assignObj(Superclass c) {
-        return c;
-    }
-}
+
 ```
 [//]: # (END)
 
@@ -51,30 +52,16 @@ Test to check whether return parameters are assigned correctly when calls are de
 package ctx;
 
 import lib.annotations.callgraph.DirectCall;
-class Superclass {
-    void method() {
-        //do something
-    }
-}
-class Subclass1 extends Superclass {
-    void method() {
-        //do something
-    }
-}
-class Subclass2 extends Superclass {
-    void method() {
-        //do something
-    }
-}
+
 class Class {
-    
-    @DirectCall(name = "method", line = 25, resolvedTargets = "Lctx/Subclass1;" , prohibitedTargets = {"Lctx/Superclass;", "Lctx/Subclass2;"})
+
+    @DirectCall(name = "method", line = 11, resolvedTargets = "Lctx/Subclass1;" , prohibitedTargets = {"Lctx/Superclass;"})
     public static void main(String[] args) {
         Superclass clz1 = assignObj(new Subclass1());
-        Superclass clz2 = assignObj(new Subclass2());
+        Superclass clz2 = assignObj(new Superclass());
         clz1.method();
     }
-    
+
     private static Superclass assignObj(Superclass c) {
         return m1(c);
     }
@@ -90,6 +77,17 @@ class Class {
         return c;
     }
 }
+class Superclass {
+    void method() {
+        //do something
+    }
+}
+class Subclass1 extends Superclass {
+    void method() {
+        //do something
+    }
+}
+
 ```
 [//]: # (END)
 
@@ -101,6 +99,16 @@ Test to check whether overloaded methods( by parameters ) can be identified corr
 package ctx;
 
 import lib.annotations.callgraph.DirectCall;
+
+class Class {
+
+    @DirectCall(name = "method", line = 11, resolvedTargets = "Lctx/A;", rtParameterTypes = { int.class },
+            prohibitedTargets = "Lctx/A;", ptParameterTypes = { String.class })
+    public static void main(String[] args) {
+        A a = new A();
+        a.method(2);
+    }
+}
 class A {
     void method(String a) {
         //do something
@@ -109,14 +117,67 @@ class A {
         //do something
     }
 }
+```
+[//]: # (END)
+
+## Context4
+[//]: # (MAIN: ctx.Class)
+Test to check whether overloaded methods( by number of parameters ) can be identified correctly.
+```java
+// ctx/Class.java
+package ctx;
+
+import lib.annotations.callgraph.DirectCall;
 
 class Class {
-    
-    @DirectCall(name = "method", line = 19, resolvedTargets = "Lctx/A;", rtParameterTypes = { int.class },
-            prohibitedTargets = "Lctx/A;", ptParameterTypes = { String.class })
+
+    @DirectCall(name = "method", line = 11, resolvedTargets = "Lctx/A;", rtParameterTypes = { String.class },
+            prohibitedTargets = "Lctx/A;", ptParameterTypes = { String.class, String.class })
     public static void main(String[] args) {
         A a = new A();
-        a.method(2);
+        a.method("Hi!!");
+    }
+}
+class A {
+    void method(String a, String b) {
+        //do something
+    }
+    void method(String a) {
+        //do something
+    }
+}
+```
+[//]: # (END)
+
+
+## Context5
+[//]: # (MAIN: ctx.Class)
+Test to check whether parameters are considered.
+```java
+// ctx/Class.java
+package ctx;
+
+import lib.annotations.callgraph.DirectCall;
+
+class Class {
+
+    public static void main(String[] args) {
+        assignObj(new Subclass1());
+    }
+
+    @DirectCall(name = "method", line = 13, resolvedTargets = "Lctx/Subclass1;" , prohibitedTargets = {"Lctx/Superclass;"})
+    private static void assignObj(Superclass c) {
+        c.method();
+    }
+}
+class Superclass {
+    void method() {
+        //do something
+    }
+}
+class Subclass1 extends Superclass {
+    void method() {
+        //do something
     }
 }
 ```
