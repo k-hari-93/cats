@@ -116,12 +116,16 @@ object CGMatcher {
             val line = AnnotationHelper.getLineNumber(annotation)
             val name = AnnotationHelper.getName(annotation)
             val returnType = AnnotationHelper.getReturnType(annotation).toJVMTypeName
-            val rtParameterTypes = AnnotationHelper.getParameterList(annotation,"rtParameterTypes").map(_.toJVMTypeName)
-            val ptParameterTypes = AnnotationHelper.getParameterList(annotation, "ptParameterTypes").map(_.toJVMTypeName)
+            val rtParameterTypes = AnnotationHelper.getParameterList(annotation, "rtParameterTypes")
+                                                   .map(_.toJVMTypeName)
+            val ptParameterTypes = AnnotationHelper.getParameterList(annotation, "ptParameterTypes")
+                                                   .map(_.toJVMTypeName)
 
 
             computedCallSites.find { cs ⇒
-                cs.line == (if(locationSupport) { line } else -1) && cs.declaredTarget.name == name
+                cs.line == (if (locationSupport) {
+                    line
+                } else -1) && cs.declaredTarget.name == name
             } match {
                 case Some(computedCallSite) ⇒
 
@@ -134,7 +138,7 @@ object CGMatcher {
                         if (!computedTargets.contains(m)) {
                             if (verbose)
                                 println(s"$line:${annotatedMethod.declaringClass}#${annotatedMethod.name}:\t there is no call to $annotatedTgt#$name")
-                            return Unsound;
+                            finalAssessment(0) = finalAssessment(0).combine(Unsound)
                         } else {
                             if (verbose) println("found it")
                         }
