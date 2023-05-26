@@ -51,23 +51,13 @@ class Class {
 
     @DirectCall(name = "method", line = 11, resolvedTargets = "Lobj/Subclass1;" , prohibitedTargets = {"Lobj/Superclass;", "Lobj/Subclass2;"})
     public static void main(String[] args) {
-        Superclass clz = new Superclass(new Subclass2());
-        Superclass clz1 = new Superclass(new Subclass1());
+        Test clz = new Test(new Subclass2());
+        Test clz1 = new Test(new Subclass1());
         clz1.a.method();
     }
 }
 
 class Superclass {
-    Superclass a;
-
-    public Superclass(Superclass a){
-        this.a=a;
-    }
-
-    Superclass getA(){
-        return a;
-    }
-
     void method() {
         //do something
     }
@@ -81,6 +71,14 @@ class Subclass1 extends Superclass {
 class Subclass2 extends Superclass {
     void method() {
         //do something
+    }
+}
+
+class Test {
+    Superclass a;
+    
+    public Test(Superclass a) {
+        this.a = a;
     }
 }
 ```
@@ -132,24 +130,14 @@ class Class {
 
     @DirectCall(name = "method", line = 12, resolvedTargets = "Lobj/Subclass1;" , prohibitedTargets = {"Lobj/Superclass;"})
     public static void main(String[] args) {
-        Superclass clz = new Superclass(new Subclass1());
-        Superclass clz1 = clz;
+        Test clz = new Test(new Subclass1());
+        Test clz1 = clz;
         Superclass clz2 = clz1.getA();
         clz2.method();
     }
 }
 
 class Superclass {
-    Superclass a;
-
-    public Superclass(Superclass a){
-        this.a=a;
-    }
-
-    Superclass getA(){
-        return a;
-    }
-
     void method() {
         //do something
     }
@@ -159,7 +147,17 @@ class Subclass1 extends Superclass {
         //do something
     }
 }
+
+class Test {
+    Superclass a;
+
+    public Test(Superclass a) {
+        this.a = a;
+    }
+    
+    Superclass getA() {
+        return this.a;
+    }
+}
 ```
 [//]: # (END)
-
-
