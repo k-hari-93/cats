@@ -9,12 +9,13 @@ methods.
 [//]: # (MAIN: pimc.Class)
 Test whether a call to the private interface method is resolved correctly 
 ```java
+// pimc/Class.java
 package pimc;
 
 import lib.annotations.callgraph.DirectCall;
-public interface Interface {
-    void method() {
-        @DirectCall(name = "privateMethod", line = 7, resolvedTargets = "Lpimc/Interface;")
+interface Interface {
+    @DirectCall(name = "privateMethod", line = 7, resolvedTargets = "Lpimc/Interface;")
+    default void method() {
         privateMethod();
     }
     private void privateMethod () {
@@ -29,17 +30,20 @@ class Class implements Interface {
     }
 }
 ```
+[//]: # (END)
+
 ## PIMC2
 [//]: # (MAIN: pimc.Class)
 Test whether a call to the private interface method is resolved correctly in presence of overloading
 ```java
+// pimc/Class.java
 package pimc;
 
 import lib.annotations.callgraph.DirectCall;
-public interface Interface {
-    void method() {
-        @DirectCall(name = "privateMethod", line = 8, resolvedTargets = "Lpimc/Interface;", 
-                prohibitedTargets = "Lpimc/Interface", ptParameterTypes = { int.class })
+interface Interface {
+    @DirectCall(name = "privateMethod", line = 8, resolvedTargets = "Lpimc/Interface;",
+            prohibitedTargets = "Lpimc/Interface", ptParameterTypes = { int.class })
+    default void method() {
         privateMethod();
     }
     private void privateMethod () {
@@ -57,3 +61,4 @@ class Class implements Interface {
     }
 }
 ```
+[//]: # (END)
