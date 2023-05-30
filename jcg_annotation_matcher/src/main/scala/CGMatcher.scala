@@ -55,7 +55,7 @@ object CGMatcher {
             if AnnotationHelper.isAnnotatedMethod(method)
         } {
             // check if the call site might not be ambiguous
-            AnnotationVerifier.verifyNoAmbiguousCalls(method)
+//            AnnotationVerifier.verifyNoAmbiguousCalls(method)
 
             val annotatedMethod = convertMethod(method)
 

@@ -132,7 +132,7 @@ class Subclass1 extends Superclass {
 ```
 [//]: # (END)
 
-## Flow4
+## Flow5
 [//]: # (MAIN: flow.Class)
 Test to check if the object assignment in the cleanup block is correctly evaluated.
 ```java
@@ -170,7 +170,7 @@ class Subclass1 extends Superclass {
 ```
 [//]: # (END)
 
-## Flow5
+## Flow6
 [//]: # (MAIN: flow.Class)
 Test to check if the object assignment in the exception block is correctly evaluated.
 ```java
@@ -207,7 +207,7 @@ class Subclass1 extends Superclass {
 ```
 [//]: # (END)
 
-## Flow6
+## Flow7
 [//]: # (MAIN: flow.Class)
 Test to check if branches are correctly evaluated.
 ```java
