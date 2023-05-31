@@ -27,3 +27,5 @@ local.sbt
 .run/*
 .jvmopts
 testcaseJars/*
+testcaseJars.bak/*
+java9+ cases/*
