@@ -1,6 +1,6 @@
+import org.apache.commons.io.FilenameUtils
 import sootup.callgraph.{ClassHierarchyAnalysisAlgorithm, RapidTypeAnalysisAlgorithm}
 import sootup.core.signatures.MethodSignature
-import sootup.core.typehierarchy.ViewTypeHierarchy
 import sootup.core.types.PrimitiveType._
 import sootup.core.types.{ArrayType, ClassType, Type, VoidType}
 import sootup.java.bytecode.inputlocation.JavaClassPathAnalysisInputLocation
@@ -56,9 +56,10 @@ object SootUpAdapter extends JCGTestAdapter {
         } else {
             view.getClasses.asScala.toList
                 .flatMap(className => className.getMethods.asScala.toList)
-                .map(_.getSignature).asJava
+                .map(_.getSignature)
+                .filterNot(sig => view.getMethod(sig).get().isBuiltInMethod).asJava
         }
-        //Hardcode library entry methods
+
         val cgAlgorithm = algorithm match {
             case CHA => new ClassHierarchyAnalysisAlgorithm(view)
 //            case VTA => new ClassHierarchyAnalysisAlgorithm(view, typeHierarchy)
