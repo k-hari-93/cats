@@ -44,8 +44,7 @@ object SootUpAdapter extends JCGTestAdapter {
                                      .addInputLocation(rtJar)
                                      .build()
 
-        val view = javaProject.createFullView()
-        val typeHierarchy = new ViewTypeHierarchy(view)
+        val view = javaProject.createView()
         val entryMethods = if (mainClass != null) {
             val classType = identifierFactory.getClassType(mainClass)
             val entryMethod = identifierFactory.getMethodSignature(classType,
@@ -59,12 +58,12 @@ object SootUpAdapter extends JCGTestAdapter {
                 .flatMap(className => className.getMethods.asScala.toList)
                 .map(_.getSignature).asJava
         }
-
+        //Hardcode library entry methods
         val cgAlgorithm = algorithm match {
-            case CHA => new ClassHierarchyAnalysisAlgorithm(view, typeHierarchy)
+            case CHA => new ClassHierarchyAnalysisAlgorithm(view)
 //            case VTA => new ClassHierarchyAnalysisAlgorithm(view, typeHierarchy)
 //            case SPARK => new ClassHierarchyAnalysisAlgorithm(view, typeHierarchy)
-            case RTA => new RapidTypeAnalysisAlgorithm(view, typeHierarchy)
+            case RTA => new RapidTypeAnalysisAlgorithm(view)
             case _ => throw new IllegalArgumentException(s"unknown algorithm $algorithm")
         }
 

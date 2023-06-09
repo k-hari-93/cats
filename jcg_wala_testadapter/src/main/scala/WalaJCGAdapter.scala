@@ -5,8 +5,8 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.util
 import java.util.stream.Collectors
-
 import com.ibm.wala.classLoader.Language.JAVA
+import com.ibm.wala.core.util.config.AnalysisScopeReader
 import com.ibm.wala.ipa.callgraph.AnalysisCacheImpl
 import com.ibm.wala.ipa.callgraph.AnalysisOptions
 import com.ibm.wala.ipa.callgraph.impl.Util
@@ -15,7 +15,6 @@ import com.ibm.wala.properties.WalaProperties
 import com.ibm.wala.types.MethodReference
 import com.ibm.wala.types.TypeReference
 import com.ibm.wala.util.NullProgressMonitor
-import com.ibm.wala.util.config.AnalysisScopeReader
 import play.api.libs.json.Json
 
 import scala.collection.JavaConverters._
@@ -58,7 +57,7 @@ object WalaJCGAdapter extends JCGTestAdapter {
             new File(cl.getResource("Java60RegressionExclusions.txt").getFile)
         }
 
-        val scope = AnalysisScopeReader.makeJavaBinaryAnalysisScope(cp, ex)
+        val scope = AnalysisScopeReader.instance.makeJavaBinaryAnalysisScope(cp, ex)
 
         // we do not need the wala.properties anymore!
         walaPropertiesFile.delete()
