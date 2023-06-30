@@ -125,8 +125,8 @@ class Class {
     public static void main(String[] args) {
         Test clz = new Test(new Subclass1());
         Test clz1 = clz;
-        Superclass clz2 = clz1.getA();
-        clz2.method();
+        Test clz2 = clz1.getThis();
+        clz2.a.method();
     }
 }
 
@@ -150,6 +150,10 @@ class Test {
     
     Superclass getA() {
         return this.a;
+    }
+    
+    Test getThis() {
+        return this;
     }
 }
 ```
