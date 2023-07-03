@@ -48,10 +48,17 @@ against the test suite. Besides testing DOOP, the adapter also allows to generat
 project. The adapter can also serialize the generated call graph in a unified format
 (see Section Call-graph Serialization).
 
+- **jcg_sootup_adapter** accomodates an adapter that allows to test SootUp's call graph algorithms against 
+the test suite. Currently, support SootUp's CHA and RTA algorithms. It also serializes the call graph into a unified
+format.
+
+
 - **jcg_data_format** holds the data structure which are used to represent the call graphs internally.
 And data classes for project specifications.
 
-- **jcg_evaluation** provides a several call-graph evaluation an understanding tools. The usage
+- **jcg_evaluation** provides a several call-graph evaluation an understanding tools. The FingerprintExtractor is the
+tool to be used to generate call graph fingerprints of the call graph algorithms in the frameworks. The FingerprintExtractor
+calls the adapters.
 
 ## Annotating Test Expectations
 
