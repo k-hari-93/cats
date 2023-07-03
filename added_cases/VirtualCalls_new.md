@@ -1,33 +1,3 @@
-## VC2
-[//]: # (MAIN: vc.Class)
-Tests a virtually dispatched method call when a simple type hierarchy is present.
-```java
-// vc/Class.java
-package vc;
-
-import lib.annotations.callgraph.DirectCall;
-
-class Class {
-
-    public void method(){ }
-
-    @DirectCall(name = "method", line = 11, resolvedTargets = "Lvc/SubClass;", prohibitedTargets = "Lvc/Class;")
-    public static void callMethod(Class cls) {
-        cls.method();
-    }
-
-    public static void main(String[] args){
-        callMethod(new SubClass());
-    }
-}
-
-class SubClass extends Class {
-
-    public void method() { }
-}
-```
-[//]: # (END)
-
 ## VC4
 [//]: # (MAIN: vc.Class)
 Tests a virtually dispatched method call when the receiver is loaded from an array.
