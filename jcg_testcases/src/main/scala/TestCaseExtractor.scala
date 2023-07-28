@@ -1,7 +1,6 @@
 import scala.io.Source
 import java.io.PrintWriter
 import java.io.File
-
 import javax.tools.ToolProvider
 import org.apache.commons.io.FileUtils
 import play.api.libs.json.JsValue
@@ -74,8 +73,8 @@ object TestCaseExtractor {
              * [//]: # (END)
              */
             val reHeaders = ("""(?s)"""+
-                """\#\#([^\n]*)\n"""+ // ##ProjectName
-                """\[//\]: \# \((?:MAIN: ([^\n]*)|LIBRARY)\)\n"""+ // [//]: # (Main: path.to.Main.java) or [//]: # (LIBRARY)
+                """\#\#([^\r?\n]*)\r?\n"""+ // ##ProjectName
+                """\[//\]: \# \((?:MAIN: ([^\r?\n]*)|LIBRARY)\)\r?\n"""+ // [//]: # (Main: path.to.Main.java) or [//]: # (LIBRARY)
                 """(.*?)"""+ // multiple code snippets
                 """\[//\]: \# \(END\)""").r( // [//]: # (END)
                     "projectName", "mainClass", "body"
@@ -87,7 +86,7 @@ object TestCaseExtractor {
              * CODE SNIPPET
              * ```
              */
-            val re = """(?s)```java(\n// ([^/]*)([^\n]*)\n([^`]*))```""".r
+            val re = """(?s)```java(\r?\n// ([^/]*)([^\r?\n]*)\r?\n([^`]*))```""".r
 
             reHeaders.findAllIn(lines).matchData.foreach { projectMatchResult ⇒
                 val projectName = projectMatchResult.group("projectName").trim
@@ -130,8 +129,7 @@ object TestCaseExtractor {
                     println(allClassFiles.mkString("[DEBUG] Produced class files: \n\n", "\n", "\n\n"))
                 }
 
-                val allClassFileNames = allClassFiles.map(_.getAbsolutePath.replace(s"${tmp.getAbsolutePath}/$projectName/bin/", ""))
-
+                val allClassFileNames = allClassFiles.map(_.getAbsolutePath.replace(s"${tmp.getAbsolutePath}${File.separator}$projectName${File.separator}bin${File.separator}", ""))
 
                 val jarOpts = Seq(if (main != null) "cfe" else "cf")
                 val outPathCompiler = new File(s"${result.getAbsolutePath}/$projectName.jar")
